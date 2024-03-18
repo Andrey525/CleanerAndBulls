@@ -44,7 +44,7 @@ function delete_files
     exit -1
   fi
 
-  find $DIR/ -maxdepth 1 -name *.$FILE_EXTENSION -delete 2> /dev/null
+  find $DIR/ -maxdepth 1 -type f -name *.$FILE_EXTENSION -delete 2> /dev/null
 
   if [ $? -eq 0 ];
   then
