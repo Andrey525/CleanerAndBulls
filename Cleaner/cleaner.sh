@@ -8,7 +8,7 @@ function print_help
   echo -e "\nThe Cleaner utility allows you to delete all files with a given extension in a given directory.\n"
   echo "Usage: cleaner.sh -d <dir_name> -e <file_extension>"
   echo " Example:"
-  echo -e " cleaner -d /home/username -e txt\n"
+  echo -e " cleaner.sh -d /home/username -e txt\n"
 }
 
 function parse_cmd_args
