@@ -29,8 +29,7 @@ namespace BullsAndCows.Model
             /* Request secrets from each */
             for (int i = 0; i < PLAYERS_COUNT; i++)
             {
-                if (null == (_playersSecrets[i] = GetSequenceFromPlayer(_players[i])))
-                    return;
+                _playersSecrets[i] = GetSequenceFromPlayer(_players[i]);
 
                 if (i == WhoStarted)
                     _players[i].Handle(string.Empty, NotifyCode.YouStart);
