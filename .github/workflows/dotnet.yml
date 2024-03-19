@@ -1,0 +1,32 @@
+name: BullsAndCows-CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  PATH_TO_PROJECT: ./BullsAndCows/BullsAndCows.csproj
+  PATH_TO_TESTS: ./BullsAndCowsTests/BullsAndCowsTests.csproj
+
+jobs:
+
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore project dependencies
+      run: dotnet restore $PATH_TO_PROJECT
+    - name: Build project
+      run: dotnet build --no-restore $PATH_TO_PROJECT
+    - name: Restore test dependencies
+      run: dotnet restore $PATH_TO_TESTS
+    - name: Build tests
+      run: dotnet build --no-restore $PATH_TO_TESTS
+    - name: Run tests
+      run: dotnet test --no-build $PATH_TO_TESTS
