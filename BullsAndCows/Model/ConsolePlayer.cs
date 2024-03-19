@@ -48,7 +48,6 @@
         {
             Console.WriteLine($"Enter {GameModel.NUMBER_LENGTH}-digits number:");
             var numbersStr = Console.ReadLine();
-            Console.Clear();
             return numbersStr;
         }
 

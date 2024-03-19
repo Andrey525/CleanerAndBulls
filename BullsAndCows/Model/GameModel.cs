@@ -15,8 +15,7 @@ namespace BullsAndCows.Model
         private int WhoStarted { get; init; }
         private int WhoseTurn { get; set; }
         private bool IsDraw { get; set; } = false;
-
-        private bool IsSecretsКeceived { get; set; }
+        private bool IsSecretsReceived { get; set; }
 
         public GameModel(Player player1, Player player2)
         {
@@ -37,7 +36,7 @@ namespace BullsAndCows.Model
                     _players[i].Handle(string.Empty, NotifyCode.OpponentStart);
             }
 
-            IsSecretsКeceived = true;
+            IsSecretsReceived = true;
 
             /* Game loop */
             while (true)
@@ -105,7 +104,7 @@ namespace BullsAndCows.Model
             {
                 try
                 {
-                    if (!IsSecretsКeceived)
+                    if (!IsSecretsReceived)
                         player.Handle(string.Empty, NotifyCode.MakeSecret);
 
                     var secretStr1 = player.GetNumbers();
