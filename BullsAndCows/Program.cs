@@ -1,18 +1,22 @@
 ﻿using BullsAndCows.Model;
+using Serilog;
 
 namespace BullsAndCows
 {
     public class Program
     {
-        static string? _numberStr;
         public static void Main()
         {
-            Console.WriteLine("Wellcome to the game 'Bulls And Cows'");
+            Log.Logger = new LoggerConfiguration()
+                        .MinimumLevel.Debug()
+                        .WriteTo.File(@".\logs\log.txt", rollingInterval: RollingInterval.Hour)
+                        .CreateLogger();
 
-            var gameModel = new GameModel();
-            gameModel.GetNumbers += UserInteractionHandler;
-            gameModel.GetResponse += GetResponse;
-            gameModel.ErrorOccured += PrintErrorMessage;
+            Log.Information("Game started");
+
+            var player = new ConsolePlayer();
+            var bot = new Bot();
+            var gameModel = new GameModel(player, bot);
 
             try
             {
@@ -20,28 +24,9 @@ namespace BullsAndCows
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Error(e.Message);
                 return;
             }
-
-            Console.WriteLine($"You are winner! The hidden sequence was - {_numberStr}");
-        }
-
-        private static string? UserInteractionHandler()
-        {
-            Console.WriteLine($"Enter {GameModel.NUMBER_LENGTH}-digits number:");
-            _numberStr = Console.ReadLine();
-            return _numberStr;
-        }
-
-        private static void GetResponse(int cowsCount, int bullsCount)
-        {
-            Console.WriteLine($"Cows count: {cowsCount}; Bulls count: {bullsCount}");
-        }
-
-        private static void PrintErrorMessage(string message)
-        {
-            Console.WriteLine(message);
         }
     }
 }
