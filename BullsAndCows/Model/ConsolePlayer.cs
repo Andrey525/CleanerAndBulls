@@ -2,7 +2,7 @@
 {
     public class ConsolePlayer : Player
     {
-        public override void Notify(string? message, NotifyCode notifyCode)
+        public override void Handle(string? message, NotifyCode notifyCode)
         {
             switch (notifyCode)
             {
@@ -34,10 +34,10 @@
                     Console.WriteLine($"It is Draw!");
                     break;
                 case NotifyCode.InvalidInputData:
-                    Console.WriteLine(message);
+                    Console.WriteLine($"Error: {message}");
                     break;
                 case NotifyCode.InternalError:
-                    Console.WriteLine("Internal error!");
+                    Console.WriteLine("Error: Internal error!");
                     break;
                 default:
                     break;
@@ -47,7 +47,9 @@
         public override string? GetNumbers()
         {
             Console.WriteLine($"Enter {GameModel.NUMBER_LENGTH}-digits number:");
-            return Console.ReadLine();
+            var numbersStr = Console.ReadLine();
+            Console.Clear();
+            return numbersStr;
         }
 
         public override void UpdateHorneds(Horneds horneds)

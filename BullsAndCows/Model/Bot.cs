@@ -6,7 +6,7 @@ namespace BullsAndCows.Model
         Random _random = new Random();
         public override string? GetNumbers()
         {
-            /* Generate secret value */
+            /* Generate sequence */
             int[] numbers = new int[GameModel.NUMBER_LENGTH];
             for (int i = 0; i < GameModel.NUMBER_LENGTH; i++)
             {
@@ -18,15 +18,10 @@ namespace BullsAndCows.Model
                 numbers[i] = digit;
             }
 
-            /*numbers[0] = 1;
-            numbers[1] = 2;
-            numbers[2] = 3;
-            numbers[3] = 4;*/
-
             return string.Join("", numbers);
         }
 
-        public override void Notify(string message, NotifyCode notifyCode)
+        public override void Handle(string message, NotifyCode notifyCode)
         {
             Log.Information($"Code: {notifyCode}; Message: {message};");
             return;
