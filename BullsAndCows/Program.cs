@@ -1,4 +1,5 @@
 ﻿using BullsAndCows.Model;
+using BullsAndCows.Model.Players;
 using Serilog;
 
 namespace BullsAndCows

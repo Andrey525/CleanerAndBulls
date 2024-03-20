@@ -1,5 +1,6 @@
 ﻿using BullsAndCows.Model.Helpers;
-using Serilog;
+using BullsAndCows.Model.Players;
+
 namespace BullsAndCows.Model
 {
     public class GameModel
@@ -8,14 +9,14 @@ namespace BullsAndCows.Model
         public const int PLAYERS_COUNT = 2;
 
         readonly List<Player> _players;
-        List<int[]> _playersSecrets;
+        readonly List<int[]> _playersSecrets;
 
         private Random _random = new Random();
 
-        private int WhoStarted { get; init; }
-        private int WhoseTurn { get; set; }
-        private bool IsDraw { get; set; } = false;
-        private bool IsSecretsReceived { get; set; }
+        public int WhoStarted { get; init; }
+        public int WhoseTurn { get; private set; }
+        public bool IsDraw { get; private set; }
+        public bool IsSecretsReceived { get; private set; }
 
         public GameModel(Player player1, Player player2)
         {
@@ -28,7 +29,7 @@ namespace BullsAndCows.Model
             /* Request secrets from each */
             for (int i = 0; i < PLAYERS_COUNT; i++)
             {
-                _playersSecrets[i] = GetSequenceFromPlayer(_players[i]);
+                _playersSecrets[i] = Receiver.GetSequenceFromPlayer(_players[i], this);
 
                 if (i == WhoStarted)
                     _players[i].Handle(string.Empty, NotifyCode.YouStart);
@@ -41,16 +42,7 @@ namespace BullsAndCows.Model
             /* Game loop */
             while (true)
             {
-                int[] numbers = GetSequenceFromPlayer(_players[WhoseTurn]);
-                var horneds = HornedsCounter.CountHorneds(numbers, _playersSecrets[WhoseTurn ^ 1]);
-
-                for (int i = 0; i < PLAYERS_COUNT; i++)
-                {
-                    if (i == WhoseTurn)
-                        _players[i].UpdateHorneds(horneds);
-                    else
-                        _players[i].Handle(string.Join("", numbers), NotifyCode.OpponentSuggestedNumber);
-                }
+                var horneds = GetHornedsFromCurrentPlayer();
 
                 WhoseTurn ^= 1;
 
@@ -69,18 +61,13 @@ namespace BullsAndCows.Model
                         _players[i].Handle(string.Empty, NotifyCode.OpponentLastTry);
                 }
 
-                while (true)
-                {
-                    var horneds = MoveIteration();
+                var horneds = GetHornedsFromCurrentPlayer();
 
-                    if (horneds.BullsCount == NUMBER_LENGTH)
-                        IsDraw = true;
-
-                    break;
-                }
+                if (horneds.BullsCount == NUMBER_LENGTH)
+                    IsDraw = true;
             }
 
-            /* Handle each other, who win/lose or may be draw. And send opponent's secret */
+            /* Notify each other, who win/lose or may be draw. And send opponent's secret */
             for (int i = 0; i < PLAYERS_COUNT; i++)
             {
                 if (IsDraw)
@@ -96,38 +83,9 @@ namespace BullsAndCows.Model
             /*Game over*/
         }
 
-        private int[] GetSequenceFromPlayer(Player player)
+        private Horneds GetHornedsFromCurrentPlayer()
         {
-            int[] secret;
-
-            while (true)
-            {
-                try
-                {
-                    if (!IsSecretsReceived)
-                        player.Handle(string.Empty, NotifyCode.MakeSecret);
-
-                    var secretStr1 = player.GetNumbers();
-                    secret = MessageParser.ParseMessage(secretStr1);
-                    break;
-                }
-                catch (ArgumentException e)
-                {
-                    player.Handle(e.Message, NotifyCode.InvalidInputData);
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e, $"GetSequenceFromPlayer: {e.Message}");
-                    throw new Exception(e.Message);
-                }
-            }
-
-            return secret;
-        }
-
-        private Horneds MoveIteration()
-        {
-            int[] numbers = GetSequenceFromPlayer(_players[WhoseTurn]);
+            int[] numbers = Receiver.GetSequenceFromPlayer(_players[WhoseTurn], this);
 
             var horneds = HornedsCounter.CountHorneds(numbers, _playersSecrets[WhoseTurn ^ 1]);
 

@@ -1,4 +1,4 @@
-﻿namespace BullsAndCows.Model
+﻿namespace BullsAndCows.Model.Players
 {
     public abstract class Player
     {

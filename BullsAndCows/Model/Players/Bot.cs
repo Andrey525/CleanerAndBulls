@@ -1,5 +1,6 @@
 ﻿using Serilog;
-namespace BullsAndCows.Model
+
+namespace BullsAndCows.Model.Players
 {
     public class Bot : Player
     {
@@ -18,6 +19,8 @@ namespace BullsAndCows.Model
                 numbers[i] = digit;
             }
 
+            /* Delay. Like the Bot decides how to walk. */
+            Thread.Sleep(1000);
             return string.Join("", numbers);
         }
 
